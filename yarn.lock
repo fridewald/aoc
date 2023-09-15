@@ -66,6 +66,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:^20.6.1":
+  version: 20.6.1
+  resolution: "@types/node@npm:20.6.1"
+  checksum: f9848617221b513d558071c804b006750d1ee1734c5ffea3ada9a0edd1642334ad0812222d6b99b7b8c0e1a5f1e557946ae99444c2705e9afc125abdf9fa36c2
+  languageName: node
+  linkType: hard
+
 "@types/prettier@npm:^2":
   version: 2.7.2
   resolution: "@types/prettier@npm:2.7.2"
@@ -93,8 +100,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "aoc22@workspace:."
   dependencies:
+    "@types/node": ^20.6.1
     "@types/prettier": ^2
-    fp-ts: ^2.13.1
+    fp-ts: ^2.16.1
     io-ts: ^2.2.20
     prettier: ^2.8.1
     ts-node: ^10.9.1
@@ -123,10 +131,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fp-ts@npm:^2.13.1":
-  version: 2.13.1
-  resolution: "fp-ts@npm:2.13.1"
-  checksum: 618e0028aca9ff1d52b86f438499ccab149825bdab14c678d22c3e2ccbf9d36fd1f26d463bf0ae1e63f5cd79dd54c8218af2cca0daeea68b039307b751ae9563
+"fp-ts@npm:^2.16.1":
+  version: 2.16.1
+  resolution: "fp-ts@npm:2.16.1"
+  checksum: 94e8bb1d037fdc44414ac93bbabecc3f94fb798d6564e77427ae2ecfa0f77681ec35968598d7b0cbf8274566469c7b42e8727390eb889e1121c199341939c2a3
   languageName: node
   linkType: hard
 
