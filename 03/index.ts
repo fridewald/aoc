@@ -9,33 +9,6 @@ import * as S from "fp-ts/string";
 import * as t from "io-ts";
 import { readInput } from "../utils/readInput";
 
-const scoreMap = {
-  "A X": 4,
-  "A Y": 8,
-  "A Z": 3,
-  "B X": 1,
-  "B Y": 5,
-  "B Z": 9,
-  "C X": 7,
-  "C Y": 2,
-  "C Z": 6,
-} as const;
-
-const scoreMapb = {
-  "A X": 3,
-  "A Y": 4,
-  "A Z": 8,
-  "B X": 1,
-  "B Y": 5,
-  "B Z": 9,
-  "C X": 2,
-  "C Y": 6,
-  "C Z": 7,
-} as const;
-
-const ScorePlanSchema = t.array(t.keyof(scoreMap));
-export type ScorePlan = t.TypeOf<typeof ScorePlanSchema>;
-
 const parseInput = (fileBuffer: Buffer) => {
   return pipe(fileBuffer.toString(), S.trim, S.split("\n"));
 };
@@ -51,8 +24,6 @@ const split = (
     })
   );
 };
-
-const sInter = A.getIntersectionSemigroup<string>(S.Eq);
 
 const findDuplicate = (inList: Array<[string, string]>): Array<string> => {
   return pipe(
