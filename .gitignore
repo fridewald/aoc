@@ -10,3 +10,5 @@
 *.js.map
 !./utils/curlInput.js
 cookie.txt
+
+.idea
