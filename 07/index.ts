@@ -35,23 +35,6 @@ const groupCommandAndOutput: (
   return [pipe(init, RA.prepend(as[0])), rest];
 });
 
-const createTree: (
-  a: Lines
-) => Record<string, { directSize: number; folders: ReadonlyArray<string> }> =
-  flow(
-    groupCommandAndOutput,
-    RA.reduce(
-      [],
-      (acc: ReduceType, curr: ReadonlyArray<string>): ReduceType =>
-        extractCdOrLs(acc, curr)
-    ),
-    RA.filter((x) => x.directSize !== 0 || x.folders.length !== 0),
-    RA.map(
-      (x) => [x.pwd, { directSize: x.directSize, folders: x.folders }] as const
-    ),
-    R.fromEntries
-  );
-
 const extractCdOrLs: (
   acc: ReduceType,
   curr: ReadonlyArray<string>
@@ -67,6 +50,19 @@ const extractCdOrLs: (
         () => [{ pwd: head.slice(5), folders: [], directSize: 0 }] as const
       )
     )
+  );
+
+const createTree: (
+  a: Lines
+) => Record<string, { directSize: number; folders: ReadonlyArray<string> }> =
+  flow(
+    groupCommandAndOutput,
+    RA.reduce([], extractCdOrLs),
+    RA.filter((x) => x.directSize !== 0 || x.folders.length !== 0),
+    RA.map(
+      (x) => [x.pwd, { directSize: x.directSize, folders: x.folders }] as const
+    ),
+    R.fromEntries
   );
 
 function createNewTreeElement(
@@ -171,22 +167,17 @@ const reduceTree: (
 
   return pipe(
     acc,
-    O.chain((a) =>
+    O.chain((treeSofar) =>
       pipe(
         curr.folders,
         RA.map((folder) =>
-          findTotalSize(key + (key === "/" ? "" : "/") + folder, a)
+          findTotalSize(key + (key === "/" ? "" : "/") + folder, treeSofar)
         ),
-        RA.chainFirst((x) => RA.of(O.isNone(x) ? console.log(x) : undefined)),
         RA.sequence(O.Applicative),
-        O.map(
-          flow(
-            RA.reduce(0, N.MonoidSum.concat)
-          )
-        ),
+        O.map(flow(RA.reduce(0, N.MonoidSum.concat))),
         O.map((totalSize) =>
           pipe(
-            a,
+            treeSofar,
             R.upsertAt(key, { ...curr, totalSize: totalSize + curr.directSize })
           )
         )
@@ -195,19 +186,12 @@ const reduceTree: (
   );
 };
 
-enum Left {
-  NoReturn,
-}
-
 const earlyCheckForTotalSize: (
   key: string,
   curr: TotalSizeTreeElement
 ) => (acc: TotalSizeRecord) => O.Option<TotalSizeRecord> =
   (key, curr) => (acc) => {
     if (totalSizeExists(key, acc)) {
-      console.log("total size exists");
-      console.log(findTotalSize(key, acc));
-      // console.log(acc);
       return O.of(acc);
     }
     if (pipe(curr.folders, RA.size) === 0) {
