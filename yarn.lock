@@ -103,6 +103,7 @@ __metadata:
     "@types/node": ^20.6.1
     "@types/prettier": ^2
     fp-ts: ^2.16.1
+    fp-ts-std: ^0.17.1
     io-ts: ^2.2.20
     node-fetch: ^3.3.2
     prettier: ^2.8.1
@@ -155,6 +156,17 @@ __metadata:
   dependencies:
     fetch-blob: ^3.1.2
   checksum: 82a34df292afadd82b43d4a740ce387bc08541e0a534358425193017bf9fb3567875dc5f69564984b1da979979b70703aa73dee715a17b6c229752ae736dd9db
+  languageName: node
+  linkType: hard
+
+"fp-ts-std@npm:^0.17.1":
+  version: 0.17.1
+  resolution: "fp-ts-std@npm:0.17.1"
+  peerDependencies:
+    fp-ts: ^2.16.0
+    monocle-ts: ^2.3.0
+    newtype-ts: ^0.3.0
+  checksum: c9e2cba727f5e728608017d923d36e2833517c6bd7f2cb5b6d06a5c5392fbf5d735a181b35018433bfe6890d4c28ef347fbb33ca8479bb14deba83f0fa1c7163
   languageName: node
   linkType: hard
 
