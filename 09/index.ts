@@ -3,9 +3,9 @@ import * as E from "fp-ts/Either";
 import { flow, pipe } from "fp-ts/function";
 import * as IO from "fp-ts/IO";
 import * as IOE from "fp-ts/IOEither";
+import * as O from "fp-ts/Option";
 import * as S from "fp-ts/string";
 import * as t from "io-ts";
-import { PathReporter } from "io-ts/PathReporter";
 import * as RA from "../types/ReadonlyArray";
 import * as V from "../types/Vector";
 import { readInput } from "../utils/readInput";
@@ -31,6 +31,7 @@ type Instruction = t.TypeOf<typeof InstructionCodec>;
 enum Errors {
   InvalidInput = "Invalid input",
   WrongDirection = "Step is too long",
+  EmptyArray = "Empty array",
 }
 
 const parseInput = (fileBuffer: Buffer): t.Validation<Instruction> => {
@@ -39,17 +40,13 @@ const parseInput = (fileBuffer: Buffer): t.Validation<Instruction> => {
     S.trim,
     S.split("\n"),
     RA.map(S.split(" ")),
-    InstructionCodec.decode,
-    (e) => {
-      console.log(PathReporter.report(e));
-      return e;
-    }
+    InstructionCodec.decode
   );
 };
 
 const zeroVector = { x: 0, y: 0 };
 
-type Acc = { tailToHeadVec: V.Vector; tailPosition: V.Vector };
+type TailState = { tailToHeadVec: V.Vector; tailPosition: V.Vector };
 
 const step = (direction: Direction) => {
   switch (direction) {
@@ -77,53 +74,128 @@ const calcNextMove = (
   }
 };
 
-const move =
+const updateTailWithDirection =
   (direction: Direction) =>
   ({
     tailToHeadVec,
     tailPosition,
-  }: Acc): E.Either<Errors.WrongDirection, Acc> => {
+  }: TailState): E.Either<Errors.WrongDirection, TailState> => {
+    return updateTailPosition({
+      tailToHeadVec: V.Semigroup.concat(tailToHeadVec, step(direction)),
+      tailPosition,
+    });
+  };
+
+const moveLongTail =
+  (direction: Direction) =>
+  (
+    arrTailState: ReadonlyArray<TailState>
+  ): E.Either<Errors.WrongDirection, ReadonlyArray<TailState>> => {
+    const [[start], end] = RA.splitAt(1)(arrTailState);
     return pipe(
-      E.Do,
-      E.bind("step", () => E.of(step(direction))),
-      E.bind("tmpTailToHeadVec", ({ step }) =>
-        E.of(V.Semigroup.concat(tailToHeadVec, step))
+      end,
+      RA.scanLeft(
+        updateTailWithDirection(direction)(start),
+        (ELastKnot, currKnot) =>
+          pipe(
+            ELastKnot,
+            E.flatMap((lastKnot) =>
+              updateTailPosition({
+                tailPosition: currKnot.tailPosition,
+                tailToHeadVec: V.Semigroup.concat(
+                  lastKnot.tailPosition,
+                  V.Negative(currKnot.tailPosition)
+                ),
+              })
+            )
+          )
       ),
-      E.bind("moveTail", ({ tmpTailToHeadVec }) =>
-        calcNextMove(tmpTailToHeadVec)
-      ),
-      E.map(({ moveTail, tmpTailToHeadVec }) => ({
-        tailPosition: V.Semigroup.concat(tailPosition, moveTail),
-        tailToHeadVec: V.Semigroup.concat(
-          tmpTailToHeadVec,
-          V.Negative(moveTail)
-        ),
-      }))
+      RA.sequence(E.Applicative)
     );
   };
 
-function numberOfVisibleTrees(inputPath: string, prefix: string) {
+function updateTailPosition({
+  tailToHeadVec,
+  tailPosition,
+}: TailState): E.Either<Errors.WrongDirection, TailState> {
+  return pipe(
+    calcNextMove(tailToHeadVec),
+    E.map((moveTail) => ({
+      tailPosition: V.Semigroup.concat(tailPosition, moveTail),
+      tailToHeadVec: V.Semigroup.concat(tailToHeadVec, V.Negative(moveTail)),
+    }))
+  );
+}
+
+const getUniqTailPositions = flow(
+  RA.map(({ tailPosition }) => tailPosition),
+  RA.uniq(V.Eq),
+  RA.size
+);
+const unfoldDirections = RA.flatMap(([direction, step]) =>
+  RA.replicate(step, direction)
+);
+
+function tailPosition(inputPath: string, prefix: string) {
   return pipe(
     readInput(inputPath),
     IO.map(E.flatMap(parseInput)),
-    IOE.tap((data) => IOE.fromIO(Console.log(data))),
-    IOE.map(RA.flatMap(([direction, step]) => RA.replicate(step, direction))),
+    IOE.map(unfoldDirections),
     IOE.flatMap(
       flow(
         RA.scanLeft(
           E.of({
             tailToHeadVec: { x: 0, y: 0 },
             tailPosition: { x: 0, y: 0 },
-          } satisfies Acc),
-          (acc: E.Either<Errors.WrongDirection, Acc>, curr) =>
-            E.flatMap(move(curr))(acc)
+          }),
+          (
+            lastState: E.Either<Errors.WrongDirection, TailState>,
+            currDirection
+          ) =>
+            pipe(lastState, E.flatMap(updateTailWithDirection(currDirection)))
         ),
         RA.sequence(E.Applicative),
-        E.map(
+        E.map(getUniqTailPositions),
+        IOE.fromEither
+      )
+    ),
+    IOE.fold(
+      (err) => Console.error(err),
+      (result) =>
+        pipe(
+          Console.log(`${prefix}: `),
+          IO.flatMap(() => Console.log(result))
+        )
+    )
+  );
+}
+
+function nineTailPosition(inputPath: string, prefix: string) {
+  return pipe(
+    readInput(inputPath),
+    IO.map(E.flatMap(parseInput)),
+    IOE.map(unfoldDirections),
+    IOE.flatMap(
+      flow(
+        RA.scanLeft(
+          E.of(
+            RA.replicate(9, {
+              tailToHeadVec: { x: 0, y: 0 },
+              tailPosition: { x: 0, y: 0 },
+            })
+          ),
+          (
+            acc: E.Either<Errors.WrongDirection, ReadonlyArray<TailState>>,
+            curr
+          ) => pipe(acc, E.flatMap(moveLongTail(curr)))
+        ),
+        RA.sequence(E.Applicative),
+        E.flatMap(
           flow(
-            RA.map(({ tailPosition }) => tailPosition),
-            RA.uniq(V.Eq),
-            RA.size
+            RA.map(RA.last),
+            RA.sequence(O.Applicative),
+            O.map(getUniqTailPositions),
+            E.fromOption(() => Errors.EmptyArray)
           )
         ),
         IOE.fromEither
@@ -140,29 +212,10 @@ function numberOfVisibleTrees(inputPath: string, prefix: string) {
   );
 }
 
-function highestVisibleScore(inputPath: string, prefix: string) {
-  return pipe(
-    readInput(inputPath),
-    IOE.map(parseInput)
-    // IOE.map(prepareMatrices),
-    // IOE.map(R.map(findDist)),
-    // IOE.map(combineMatrices(combineTwoDistMatrices)),
-    // IOE.map(flow(RA.map(RA.maximum(N.Ord)), RA.maximum(N.Ord))),
-    // IOE.fold(
-    //   (err) => Console.error(err.message),
-    //   (result) =>
-    //     pipe(
-    //       Console.log(`${prefix}: `),
-    //       IO.flatMap(() => Console.log(result))
-    //     )
-    // )
-  );
-}
-
 function main() {
-  numberOfVisibleTrees("./input.txt", "Result exercise 9 part 1")();
+  tailPosition("./input.txt", "Result exercise 9 part 1")();
 
-  // highestVisibleScore("./input.txt", "Result exercise 9 part 2")();
+  nineTailPosition("./input.txt", "Result exercise 9 part 2")();
 }
 
 main();
