@@ -9,10 +9,11 @@ function downloadInput() {
     .readFileSync("utils/cookie.txt", { flag: "r" })
     .toString()
     .trim();
-  const exercisePath = `./${String("0" + process.argv[2])}`;
+  const day = process.argv[2];
+  const exercisePath = `./${String(day.length === 1 ? "0" + day : day)}`;
 
   fs.mkdirSync(exercisePath, { recursive: true });
-  return fetch(`https://adventofcode.com/2022/day/${process.argv[2]}/input`, {
+  return fetch(`https://adventofcode.com/2022/day/${day}/input`, {
     headers: {
       accept:
         "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
@@ -26,7 +27,9 @@ function downloadInput() {
     method: "GET",
   })
     .then((res) => res.text())
-    .then((body) => fs.writeFileSync(`${exercisePath}/input.txt`, body.trimEnd()));
+    .then((body) =>
+      fs.writeFileSync(`${exercisePath}/input.txt`, body.trimEnd())
+    );
 }
 
 await downloadInput();
