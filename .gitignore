@@ -12,3 +12,8 @@
 cookie.txt
 
 .idea
+
+
+# haskell
+*.o
+*.hi
