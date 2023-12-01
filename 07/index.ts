@@ -34,6 +34,29 @@ const groupCommandAndOutput: (
   );
   return [pipe(init, RA.prepend(as[0])), rest];
 });
+// const extractCdOrLsNew: (
+//   acc: ReduceType,
+//   curr: ReadonlyArray<string>
+// ) => ReduceType = (acc, curr) =>
+//   pipe(
+//     O.Do,
+//     O.bind("head_tail", () => O.of(pipe(curr, RA.splitAt(1)))),
+//     O.bind("lastTreeElement", () => pipe(acc, RA.last)),
+//     O.bind("res", ({ head_tail, lastTreeElement }) =>
+//       pipe(
+//         acc,
+//         RA.append(
+//           createNewTreeElement(head_tail[0][0], head_tail[1], lastTreeElement)
+//         ),
+//         O.of
+//       )
+//     ),
+//     O.fold(
+//       // head.slice(5)
+//       () => [{ pwd: "", folders: [], directSize: 0 }] as const,
+//       ({ res }) => res
+//     )
+//   );
 
 const extractCdOrLs: (
   acc: ReduceType,
@@ -103,7 +126,7 @@ function calculateDirectSize(sep): number {
         O.getOrElseW(() => 0)
       )
     ),
-    RA.reduce(0, (acc, curr) => acc + curr)
+    RA.reduce(0, N.MonoidSum.concat)
   );
 }
 
