@@ -5,7 +5,7 @@ import * as IOE from "fp-ts/IOEither";
 import { flow, pipe } from "fp-ts/lib/function";
 import * as O from "fp-ts/Option";
 import * as S from "fp-ts/string";
-import { readInput } from "../utils/readInput";
+import { readInput } from "../../utils/readInput";
 
 type Line = string;
 

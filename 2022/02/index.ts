@@ -5,7 +5,7 @@ import { concatAll } from "fp-ts/lib/Monoid";
 import { MonoidSum } from "fp-ts/lib/number";
 import * as S from "fp-ts/string";
 import * as t from "io-ts";
-import { readInput } from "../utils/readInput";
+import { readInput } from "../../utils/readInput";
 
 const scoreMap = {
   "A X": 4,

@@ -7,7 +7,7 @@ import { flow, pipe } from "fp-ts/lib/function";
 import * as O from "fp-ts/Option";
 import * as R from "fp-ts/Reader";
 import * as S from "fp-ts/string";
-import { readInput } from "../utils/readInput";
+import { readInput } from "../../utils/readInput";
 
 type Lines = ReadonlyArray<string>;
 

@@ -6,8 +6,8 @@ import * as N from "fp-ts/lib/number";
 import * as O from "fp-ts/lib/Option";
 import * as R from "fp-ts/lib/Record";
 import * as S from "fp-ts/lib/string";
-import * as RA from "../types/ReadonlyArray";
-import { readInput } from "../utils/readInput";
+import * as RA from "../../types/ReadonlyArray";
+import { readInput } from "../../utils/readInput";
 
 type GenericForestMatrix<T> = ReadonlyArray<ReadonlyArray<T>>;
 type ForestMatrix = GenericForestMatrix<number>;

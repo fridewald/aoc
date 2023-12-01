@@ -7,7 +7,7 @@ import * as O from "fp-ts/lib/Option";
 import { reverse } from "fp-ts/lib/Ord";
 import * as R from "fp-ts/lib/Record";
 import * as S from "fp-ts/lib/string";
-import { readInput } from "../utils/readInput";
+import { readInput } from "../../utils/readInput";
 
 type Line = string;
 type Lines = ReadonlyArray<Line>;

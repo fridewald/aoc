@@ -2,18 +2,19 @@ import fetch from "node-fetch";
 import * as fs from "fs";
 
 function downloadInput() {
-  if (process.argv.length < 3) {
-    console.log(`Please provide a day number!`);
+  if (process.argv.length < 4) {
+    console.log(`Please provide a year and day number!`);
   }
+  const year = process.argv[2];
+  const day = process.argv[3];
   const cookie = fs
-    .readFileSync("utils/cookie.txt", { flag: "r" })
+    .readFileSync(`utils/cookie_${year}.txt`, { flag: "r" })
     .toString()
     .trim();
-  const day = process.argv[2];
-  const exercisePath = `./${String(day.length === 1 ? "0" + day : day)}`;
+  const exercisePath = `./${year}/${String(day.length === 1 ? "0" + day : day)}`;
 
   fs.mkdirSync(exercisePath, { recursive: true });
-  return fetch(`https://adventofcode.com/2022/day/${day}/input`, {
+  return fetch(`https://adventofcode.com/${year}/day/${day}/input`, {
     headers: {
       accept:
         "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",

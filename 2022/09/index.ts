@@ -6,9 +6,9 @@ import * as IOE from "fp-ts/IOEither";
 import * as O from "fp-ts/Option";
 import * as S from "fp-ts/string";
 import * as t from "io-ts";
-import * as RA from "../types/ReadonlyArray";
-import * as V from "../types/Vector";
-import { readInput } from "../utils/readInput";
+import * as RA from "../../types/ReadonlyArray";
+import * as V from "../../types/Vector";
+import { readInput } from "../../utils/readInput";
 
 const NumberCodec = new t.Type<number, string, string>(
   "NumberCodec",

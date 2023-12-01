@@ -9,7 +9,7 @@
 *.js
 *.js.map
 !./utils/curlInput.js
-cookie.txt
+cookie*.txt
 
 .idea
 

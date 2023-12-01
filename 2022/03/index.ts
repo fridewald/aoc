@@ -8,7 +8,7 @@ import { concatAll } from "fp-ts/lib/Monoid";
 import { MonoidSum } from "fp-ts/lib/number";
 import { ReadonlyNonEmptyArray } from "fp-ts/lib/ReadonlyNonEmptyArray";
 import * as S from "fp-ts/string";
-import { readInput } from "../utils/readInput";
+import { readInput } from "../../utils/readInput";
 
 const parseInput = (fileBuffer: Buffer): ReadonlyNonEmptyArray<string> => {
   return pipe(fileBuffer.toString(), S.trim, S.split("\n"));

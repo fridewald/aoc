@@ -4,7 +4,7 @@ import { ReadonlyNonEmptyArray } from "fp-ts/lib/ReadonlyNonEmptyArray";
 import * as N from "fp-ts/number";
 import * as RA from "fp-ts/ReadonlyArray";
 import * as S from "fp-ts/string";
-import { readInput } from "../utils/readInput";
+import { readInput } from "../../utils/readInput";
 
 const parseInput = (fileBuffer: Buffer) => {
   return pipe(fileBuffer.toString(), S.split("\n"));
