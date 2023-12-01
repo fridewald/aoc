@@ -11,7 +11,9 @@ function downloadInput() {
     .readFileSync(`utils/cookie_${year}.txt`, { flag: "r" })
     .toString()
     .trim();
-  const exercisePath = `./${year}/${String(day.length === 1 ? "0" + day : day)}`;
+  const exercisePath = `./${year}/${String(
+    day.length === 1 ? "0" + day : day
+  )}`;
 
   fs.mkdirSync(exercisePath, { recursive: true });
   return fetch(`https://adventofcode.com/${year}/day/${day}/input`, {

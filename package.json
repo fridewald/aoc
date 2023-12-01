@@ -4,8 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "prettier": "prettier --write .",
-    "prettier:check": "prettier --check .",
+    "lint": "prettier --write .",
+    "lint:check": "prettier --check .",
     "pullInput": "node -r ./.pnp.cjs utils/curlInput.mjs"
   },
   "packageManager": "yarn@3.3.1",

@@ -27,8 +27,10 @@ const testRangeOverlap = (
 const testRangeOverlap2 = (
   inList: ReadonlyNonEmptyArray<ReadonlyNonEmptyArray<number>>
 ): number => {
-  return ! ((inList[0][0] < inList[1][0] && inList[0][1] < inList[1][0]) ||
-    (inList[0][0] > inList[1][1] && inList[0][1] > inList[1][1]))
+  return !(
+    (inList[0][0] < inList[1][0] && inList[0][1] < inList[1][0]) ||
+    (inList[0][0] > inList[1][1] && inList[0][1] > inList[1][1])
+  )
     ? 1
     : 0;
 };
