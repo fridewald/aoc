@@ -1,5 +1,5 @@
 cabal-version:      2.4
-name:               aoc22
+name:               aoc
 version:            0.1.0.0
 
 -- A short (one-line) description of the package.
@@ -21,7 +21,7 @@ maintainer:         julianlukwata@posteo.de
 -- category:
 -- extra-source-files: CHANGELOG.md
 
-executable aoc22-10
+executable aoc-10
     main-is:          main.hs
 
     -- Modules included in this executable, other than Main.
@@ -33,5 +33,5 @@ executable aoc22-10
         , split
         , containers
         , base ^>=4.16.4.0
-    hs-source-dirs:   10
+    hs-source-dirs:   2023/02
     default-language: Haskell2010

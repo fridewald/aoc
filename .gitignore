@@ -18,3 +18,4 @@ cookie*.txt
 *.o
 *.hi
 *dist-newstyle
+main
