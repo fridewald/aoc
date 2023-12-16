@@ -2,7 +2,7 @@ import Data.Array.Base (mapIndices)
 import Data.Char (isSpace)
 import Data.Foldable (Foldable (fold), toList)
 import Data.List (nub, stripPrefix)
-import Data.List.Split ( chunksOf, divvy, splitWhen )
+import Data.List.Split (chunksOf, divvy, splitWhen)
 import Data.Maybe (fromJust)
 import Data.Sequence (fromList, mapWithIndex)
 import GHC.Real (reduce)
@@ -40,8 +40,8 @@ getNumberTuples = concatMap (filter notNull . splitWhen (\(ele, _) -> ele `notEl
 
 main :: IO ()
 main = do
-  -- fileIo <- readFile "input.txt"
-  fileIo <- readFile "test.txt"
+  fileIo <- readFile "input.txt"
+  -- fileIo <- readFile "test.txt"
   -- Aufgabe 1
   let filesLines = map (\line -> '.' : line ++ ".") (lines fileIo)
   let linesLength = length $ head filesLines
@@ -53,25 +53,21 @@ main = do
   let combined = map (foldl (\(digit, foundKey) (nextDigit, key) -> (digit * 10 + read [nextDigit], foundKey || notNull key)) (0, False)) numberTuples
   let res = sum [num | (num, foundKey) <- combined, foundKey]
 
-  foldMap print elementWithCharactersAround
-  foldMap print combined
+  -- foldMap print elementWithCharactersAround
+  -- foldMap print combined
   putStrLn $ "Aufgabe 1: " ++ show res
 
   -- Aufgabe 2
-  -- if ele `elem` ['*'] then (ele, count+1) else
   let replaceSome = scanl (\(_, count) ele -> if ele `elem` ['0' .. '9'] then (ele, count) else if ele == '*' then ('*', count + 1) else ('.', count)) ('.', 0) $ concat withEmptyBeforeAndAfter
   let filesLines2 = chunksOf linesLength $ tail replaceSome
   let elementWithCharactersAround2 = lineToInstruction2 <$> divvy 3 1 filesLines2
-  -- foldMap print elementWithCharactersAround2
   let numberTuples = getNumberTuples elementWithCharactersAround2
   let combined = map (foldl (\(digit, foundKey) (nextDigit, key) -> (digit * 10 + read [nextDigit], foundKey ++ key)) (0, [])) numberTuples
-  foldMap print numberTuples
   let hm = map (\(number, keys) -> (number, nub (map snd keys))) combined
-  let hm2 = [(num, keys) | (num, keys) <- hm, not (null keys)]
+  let hm2 = [(num, key) | (num, keys) <- hm, not (null keys), key <- keys]
+  let relevant :: [[Int]] = filter (\x -> (not . null $ x) && length x == 2) [[fst kk | kk <- filter (\(number, id) -> id == i) hm2] | i <- [1 .. (linesLength * length filesLines)]]
+  let res = sum (map product relevant)
 
-  foldMap print hm2
+  -- foldMap print relevant
 
-  -- let combined = map (foldl (\(digit, foundKey) (nextDigit, key) -> (digit * 10 + (read [nextDigit]), foundKey || notNull key)) (0, False)) numberTuples
-
-  -- foldMap putStrLn res
   putStrLn $ "Aufgabe 2: " ++ show res
