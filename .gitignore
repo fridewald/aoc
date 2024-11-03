@@ -5,6 +5,7 @@
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+node_modules
 
 *.js
 *.js.map
@@ -19,3 +20,9 @@ cookie*.txt
 *.hi
 *dist-newstyle
 main
+
+# gleam
+*.beam
+*.ez
+/build
+erl_crash.dump
