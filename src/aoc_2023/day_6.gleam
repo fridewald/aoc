@@ -33,7 +33,6 @@ pub fn parse_2(input: String) {
       |> string.join("")
       |> int.parse
       |> result.unwrap(0)
-      // |> list.filter_map(int.parse)
     })
   #(time, distance)
 }
@@ -59,9 +58,11 @@ pub fn pt_2(input: String) {
   let race = parse_2(input)
   let time = race.0
   let min_distance = race.1 + 1
-  list.range(0, time)
-  |> list.find(fn(button_press) {
-    button_press * { time - button_press } >= min_distance
-  })
-  // |> int.sum
+  let assert Ok(first_win) =
+    list.range(0, time)
+    |> list.find(fn(button_press) {
+      button_press * { time - button_press } >= min_distance
+    })
+
+  time + 1 - { 2 * first_win }
 }
