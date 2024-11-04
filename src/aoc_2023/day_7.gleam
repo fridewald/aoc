@@ -30,6 +30,21 @@ pub fn pt_1(input: Input) {
   |> list.fold(0, fn(acc, x) { acc + { x.1 * x.0.0.1 } })
 }
 
+fn increment(x) {
+  case x {
+    Some(i) -> i + 1
+    None -> 1
+  }
+}
+
+fn parse_cards(input: String) -> Cards {
+  input
+  |> string.to_graphemes
+  |> list.fold(dict.new(), fn(dicty, char) {
+    dict.upsert(dicty, char, increment)
+  })
+}
+
 fn compare_hand(
   card_a: #(#(String, Int), Cards),
   card_b: #(#(String, Int), Cards),
@@ -99,21 +114,6 @@ fn rank(cards: Cards) {
     _, _, _, _, _, True, _ -> 1
     _, _, _, _, _, _, _ -> 0
   }
-}
-
-fn increment(x) {
-  case x {
-    Some(i) -> i + 1
-    None -> 1
-  }
-}
-
-fn parse_cards(input: String) -> Cards {
-  input
-  |> string.to_graphemes
-  |> list.fold(dict.new(), fn(dicty, char) {
-    dict.upsert(dicty, char, increment)
-  })
 }
 
 fn is_five(cards_dict: Cards) {
