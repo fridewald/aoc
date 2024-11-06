@@ -1,8 +1,10 @@
 import gleam/dict.{type Dict}
 import gleam/io
+import gleam/iterator.{cycle}
 import gleam/list
 import gleam/result
 import gleam/string
+import gleam_community/maths/arithmetics
 
 pub type Input {
   Input(
@@ -55,7 +57,6 @@ fn do_step(
   get_next_instruction: fn(String) -> #(String, String),
 ) {
   let #(next_instruct, remaining_instructs) = get_next_instruction(instructs)
-  // io.debug(next_instruct)
   use next_node <- result.try(
     dict.get(maps, node)
     |> result.map(fn(map) {
@@ -66,7 +67,6 @@ fn do_step(
       }
     }),
   )
-  // io.debug(next_node)
   case next_node {
     "ZZZ" -> Ok(n_step)
     _ ->
@@ -92,18 +92,7 @@ fn get_next_instruction_function(base_instructions: String) {
   }
 }
 
-fn get_next_instruction_pub(instruct_string: String, base_instructions: String) {
-  case string.first(instruct_string) {
-    Ok(cur_inst) -> #(cur_inst, string.drop_left(instruct_string, 1))
-    Error(_) -> {
-      let cur_inst = string.first(base_instructions) |> result.unwrap("")
-      #(cur_inst, string.drop_left(base_instructions, 1))
-    }
-  }
-}
-
-pub fn pt_2(input: Input) {
-  // let next_instruct = get_next_instruction_function(input.instruct)
+pub fn pt_2_brute_force_is_too_slow(input: Input) {
   let end_with_a_nodes =
     input.maps
     |> dict.keys
@@ -114,78 +103,121 @@ pub fn pt_2(input: Input) {
       }
     })
   io.debug(end_with_a_nodes)
-  do_step_2(end_with_a_nodes, input.maps, 1, input.instruct, input.instruct)
-  |> result.unwrap(0)
-}
-
-fn do_step_2(
-  nodes: List(String),
-  maps: Dict(String, #(String, String)),
-  n_step: Int,
-  instructs: String,
-  init_instructs: String,
-) {
-  let #(next_instruct, remaining_instructs) =
-    get_next_instruction_pub(instructs, init_instructs)
-  // io.debug(next_instruct)
-  use next_nodes <- result.try(
-    nodes
-    |> list.map(fn(node) {
-      dict.get(maps, node)
-      |> result.map(fn(map) {
+  let maps = input.maps
+  input.instruct
+  |> string.to_graphemes
+  |> iterator.from_list
+  |> cycle
+  |> iterator.try_fold(#(1, end_with_a_nodes), fn(acc, next_instruct) {
+    let #(n_step, nodes) = acc
+    let next_nodes =
+      nodes
+      |> list.map(fn(node) {
+        let assert Ok(map) = dict.get(maps, node)
         case next_instruct {
           "L" -> map.0
           "R" -> map.1
           _ -> map.0
         }
       })
-    })
-    |> result.all,
-  )
-  // io.debug(next_nodes)
-  let not_end_with_z =
-    next_nodes
+    let not_end_with_z =
+      next_nodes
+      |> list.filter(fn(node) { !string.ends_with(node, "Z") })
+      |> list.length
+    case n_step % 1_000_000 {
+      0 -> {
+        io.debug(0)
+        io.debug(n_step)
+        ""
+      }
+      _ -> ""
+    }
+
+    case not_end_with_z {
+      0 -> Error(n_step)
+      _ -> {
+        Ok(#(n_step + 1, next_nodes))
+      }
+    }
+  })
+  |> result.unwrap_error(0)
+}
+
+type FindLoopAcc {
+  NoZ(steps: Int, node: String)
+  OneZ(steps: Int, loop_steps: Int, node: String, z_node: String)
+  MultipleZ
+}
+
+pub fn pt_2(input: Input) {
+  let end_with_a_nodes =
+    input.maps
+    |> dict.keys
     |> list.filter(fn(node) {
       case node |> string.drop_left(2) {
-        "Z" -> False
-        _ -> True
+        "A" -> True
+        _ -> False
       }
     })
-    |> list.length
 
-  // io.debug(not_end_with_z)
+  let maps = input.maps
+  let instruct_length = string.length(input.instruct)
+  let find_loop = fn(node_1) {
+    input.instruct
+    |> string.to_graphemes
+    |> iterator.from_list
+    |> cycle
+    |> iterator.try_fold(NoZ(0, node_1), fn(acc, next_instruct) {
+      let next_node_fn = fn(node) {
+        let assert Ok(map) = dict.get(maps, node)
+        case next_instruct {
+          "L" -> map.0
+          "R" -> map.1
+          _ -> map.0
+        }
+      }
+      case acc {
+        NoZ(n_step, node) -> {
+          let next_node = next_node_fn(node)
+          Ok(case
+            next_node
+            |> string.ends_with("Z")
+          {
+            True -> OneZ(n_step + 1, 0, next_node, next_node)
+            False -> NoZ(n_step + 1, next_node)
+          })
+        }
+        OneZ(n_step, loop_steps, node, z_node) -> {
+          let next_node = next_node_fn(node)
+          case
+            next_node
+            |> string.ends_with("Z")
+          {
+            True -> {
+              case
+                // loop must be multiple of the list of instructions
+                { loop_steps + 1 } % instruct_length == 0,
+                // && { n_step + 1 } % instruct_length == 0,
+                z_node == next_node
+              {
+                _, False -> Ok(MultipleZ)
+                True, True -> Error(loop_steps + 1)
+                False, True ->
+                  Ok(OneZ(n_step + 1, loop_steps + 1, next_node, z_node))
+              }
+            }
+            False -> Ok(OneZ(n_step + 1, loop_steps + 1, next_node, z_node))
+          }
+        }
+        MultipleZ -> {
+          panic as "we need to do some other algorithm as we found a second z in the loop"
+        }
+      }
+    })
+    |> result.unwrap_error(0)
+  }
 
-  case not_end_with_z {
-    3 -> {
-      io.debug(n_step)
-      io.debug(next_nodes)
-      io.debug(not_end_with_z)
-      ""
-    }
-    2 -> {
-      io.debug(n_step)
-      io.debug(next_nodes)
-      io.debug(not_end_with_z)
-      ""
-    }
-    1 -> {
-      io.debug(n_step)
-      io.debug(next_nodes)
-      io.debug(not_end_with_z)
-      ""
-    }
-    _ -> ""
-  }
-  case not_end_with_z {
-    0 -> Ok(n_step)
-    _ -> {
-      do_step_2(
-        next_nodes,
-        maps,
-        1 + n_step,
-        remaining_instructs,
-        get_next_instruction,
-      )
-    }
-  }
+  end_with_a_nodes
+  |> list.map(find_loop)
+  |> list.reduce(arithmetics.lcm)
 }
