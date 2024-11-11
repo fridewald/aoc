@@ -29,6 +29,9 @@ pub type IO {
   Inside
 }
 
+type LoopGrid =
+  dict.Dict(Posn, #(String, Direction))
+
 pub fn parse(input: String) -> Input {
   let my_simple_grid =
     input
@@ -69,125 +72,6 @@ pub fn pt_1(input: Input) {
   |> result.map(fn(x) { dict.size(x.0) / 2 })
   |> result.unwrap(0)
 }
-
-fn pos_to_string(pos: Posn) {
-  "{x:" <> int.to_string(pos.x) <> ", y:" <> int.to_string(pos.y) <> "}"
-}
-
-fn switch_io(in_io: IO) {
-  case in_io {
-    Out -> Inside
-    Inside -> Out
-  }
-}
-
-pub fn pt_2(input: Input) {
-  let start = input.1
-  let grid = input.0
-  let start_direction = input.2
-  io.debug("Start direction:")
-  io.debug(start_direction)
-  {
-    use found_loop_res <- result.try(find_loop(
-      start,
-      grid,
-      start_direction,
-      0,
-      dict.new(),
-    ))
-    // get order input
-    let loop_dict = found_loop_res.0
-    let norm_curvature = found_loop_res.1 / int.absolute_value(found_loop_res.1)
-    io.debug("Norm curvature:")
-    io.debug(norm_curvature)
-    let ord_grid =
-      grid
-      |> dict.to_list
-      |> list.sort(by: fn(pos1, pos2) {
-        let y_comp = int.compare({ pos1.0 }.y, { pos2.0 }.y)
-        case y_comp {
-          order.Eq -> int.compare({ pos1.0 }.x, { pos2.0 }.x)
-          _ -> y_comp
-        }
-      })
-    // find start symbol
-    let assert Ok(loop_end_direction) = loop_dict |> dict.get(start)
-    let start_symbole = case start_direction, loop_end_direction.1 {
-      East, East | West, West -> "-"
-      North, North | South, South -> "|"
-      East, South | North, West -> "L"
-      West, South | North, East -> "J"
-      West, North | South, East -> "7"
-      East, North | South, West -> "F"
-      _, _ -> panic as "this start seems to to be of any known type"
-    }
-
-    io.debug("Start symbol: " <> start_symbole)
-
-    // count inside points
-    ord_grid
-    |> list.fold(Ok(#(0, Out)), fn(acc, grid_point) {
-      use acc <- result.try(acc)
-      let in_io = case grid_point.0 {
-        Posn(0, _) -> Out
-        _ -> acc.1
-      }
-      let acc = #(acc.0, in_io)
-      // io.debug(grid_point)
-      let grid_value = acc.0
-      let next_acc = case { loop_dict |> dict.get(grid_point.0) } {
-        Ok(point) -> {
-          let point = case point {
-            #("S", _) -> #(start_symbole, start_direction)
-            p -> p
-          }
-          // io.debug(point)
-          // we are on the loop
-          // counting from left to right
-          // from top to bottom
-          // negative curvature:
-          // for corners the is a switch in IO if the directions if after the corner vertical
-          // positive curvature:
-          // for corners the is a switch in IO if the directions if after the corner horizontal
-          case point, norm_curvature {
-            #("|", _), _ -> #(grid_value, switch_io(in_io))
-            #("F", East), 1
-            | #("7", South), 1
-            | #("L", North), 1
-            | #("J", West), 1
-            -> {
-              #(grid_value, switch_io(in_io))
-            }
-            #("F", South), -1
-            | #("7", West), -1
-            | #("L", East), -1
-            | #("J", North), -1
-            -> {
-              #(grid_value, switch_io(in_io))
-            }
-            #("S", _), _ -> {
-              todo as "how to handle S, hard code the symbol"
-            }
-            #("-", _), _ | _, _ -> acc
-          }
-        }
-        _ -> {
-          case in_io {
-            Out -> acc
-            Inside -> #(acc.0 + 1, in_io)
-          }
-        }
-      }
-      // io.debug(next_acc)
-      Ok(next_acc)
-    })
-  }
-  |> result.map(fn(x) { x.0 })
-  |> result.unwrap(0)
-}
-
-type LoopGrid =
-  dict.Dict(Posn, #(String, Direction))
 
 fn find_loop(
   pos: Posn,
@@ -267,4 +151,158 @@ fn find_loop(
       )
     }
   }
+}
+
+fn pos_to_string(pos: Posn) {
+  "{x:" <> int.to_string(pos.x) <> ", y:" <> int.to_string(pos.y) <> "}"
+}
+
+fn switch_io(in_io: IO) {
+  case in_io {
+    Out -> Inside
+    Inside -> Out
+  }
+}
+
+pub fn pt_2(input: Input) {
+  let start = input.1
+  let grid = input.0
+  let start_direction = input.2
+  io.debug("Start direction:")
+  io.debug(start_direction)
+  {
+    use found_loop_res <- result.try(find_loop(
+      start,
+      grid,
+      start_direction,
+      0,
+      dict.new(),
+    ))
+    // get order input
+    let loop_dict = found_loop_res.0
+    let norm_curvature = found_loop_res.1 / int.absolute_value(found_loop_res.1)
+    io.debug("Norm curvature:")
+    io.debug(norm_curvature)
+    let ord_grid =
+      grid
+      |> dict.to_list
+      |> list.sort(by: fn(pos1, pos2) {
+        let y_comp = int.compare({ pos1.0 }.y, { pos2.0 }.y)
+        case y_comp {
+          order.Eq -> int.compare({ pos1.0 }.x, { pos2.0 }.x)
+          _ -> y_comp
+        }
+      })
+    // find start symbol
+    let assert Ok(loop_end_direction) = loop_dict |> dict.get(start)
+    let start_symbole = case start_direction, loop_end_direction.1 {
+      East, East | West, West -> "-"
+      North, North | South, South -> "|"
+      East, South | North, West -> "L"
+      West, South | North, East -> "J"
+      West, North | South, East -> "7"
+      East, North | South, West -> "F"
+      _, _ -> panic as "this start seems not to be of any known type"
+    }
+    // overwrite start symbol
+    let loop_dict =
+      loop_dict |> dict.insert(start, #(start_symbole, start_direction))
+
+    io.debug("Start symbol: " <> start_symbole)
+
+    // count inside points
+    ord_grid
+    |> list.fold(Ok(#(0, Out)), fn(acc, grid_point) {
+      use acc <- result.try(acc)
+      // the beginning of a line is always outside
+      let in_io = case grid_point.0 {
+        Posn(0, _) -> Out
+        _ -> acc.1
+      }
+      let grid_value = acc.0
+      // overwrite IO in case of start of line
+      let acc = #(acc.0, in_io)
+      let next_acc = case { loop_dict |> dict.get(grid_point.0) } {
+        Ok(point) -> {
+          // we are on the loop
+          // counting from left to right
+          // from top to bottom
+          // negative curvature: going around counter clockwise
+          // positive curvature: going around clockwise
+          // we only switch from out to inside and vise versa for "|" or for corners that are traversed like one would do for the corners of a normal rectangle
+          // see the following explanations:
+          // positive curvature:
+          // ......
+          // .S->7.
+          // .|..|.
+          // .L--J.
+          // ......
+          //
+          case point, norm_curvature {
+            #("|", _), _ -> #(grid_value, switch_io(in_io))
+            // ......
+            // .F--7.
+            // .|..|.
+            // .|..v.
+            // .L--J.
+            // ......
+            //
+            #("7", South), 1
+            | // ......
+              // .F--7.
+              // .|..|.
+              // .|..|.
+              // .L<-J.
+              // ......
+              //
+
+              #("J", West),
+              1
+            | // ......
+              // .F--7.
+              // .^..|.
+              // .|..|.
+              // .L--J.
+              // ......
+
+              #("L", North),
+              1
+            | // ......
+              // .F->7.
+              // .|..|.
+              // .|..|.
+              // .L--J.
+              // ......
+              //
+              #("F", East),
+              1
+            -> {
+              #(grid_value, switch_io(in_io))
+            }
+            // similar as for positive curvature
+            #("F", South), -1
+            | #("7", West), -1
+            | #("L", East), -1
+            | #("J", North), -1
+            -> {
+              #(grid_value, switch_io(in_io))
+            }
+            #("S", _), _ -> {
+              panic as "S should already be handled"
+            }
+            #("-", _), _ | _, _ -> acc
+          }
+        }
+        _ -> {
+          case in_io {
+            Out -> acc
+            Inside -> #(acc.0 + 1, in_io)
+          }
+        }
+      }
+      Ok(next_acc)
+    })
+  }
+  |> result.map(fn(x) { x.0 })
+  |> result.unwrap(0)
 }
