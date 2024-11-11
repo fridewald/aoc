@@ -1,8 +1,8 @@
+import aoc.{type Grid, type Posn, Posn}
 import gleam/dict
 import gleam/int
 import gleam/io
 import gleam/list
-import gleam/option.{None, Some}
 import gleam/order
 import gleam/result
 import gleam/string
@@ -14,15 +14,8 @@ pub type Direction {
   East
 }
 
-pub type Grid =
-  dict.Dict(Posn, String)
-
 pub type Input =
   #(Grid, Posn, Direction)
-
-pub type Posn {
-  Posn(x: Int, y: Int)
-}
 
 pub type IO {
   Out
