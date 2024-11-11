@@ -14,7 +14,6 @@ version = "1.0.0"
 
 [dependencies]
 gleam_stdlib = ">= 0.34.0 and < 2.0.0"
-toy = ">= 0.5.1 and < 1.0.0"
 gleam_otp = ">= 0.13.0 and < 1.0.0"
 gleam_community_maths = ">= 1.1.1 and < 2.0.0"
 
@@ -45,3 +44,4 @@ pt_2 = 1082
 
 [gladvent.2023.10]
 pt_1 = 6786
+pt_2 = 495

@@ -25,7 +25,6 @@ packages = [
   { name = "spinner", version = "1.1.0", build_tools = ["gleam"], requirements = ["gleam_community_ansi", "gleam_erlang", "gleam_stdlib", "glearray", "repeatedly"], otp_app = "spinner", source = "hex", outer_checksum = "200BA3D4A04D468898E63C0D316E23F526E02514BC46454091975CB5BAE41E8F" },
   { name = "thoas", version = "1.2.1", build_tools = ["rebar3"], requirements = [], otp_app = "thoas", source = "hex", outer_checksum = "E38697EDFFD6E91BD12CEA41B155115282630075C2A727E7A6B2947F5408B86A" },
   { name = "tom", version = "1.1.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "tom", source = "hex", outer_checksum = "228E667239504B57AD05EC3C332C930391592F6C974D0EFECF32FFD0F3629A27" },
-  { name = "toy", version = "0.5.1", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "toy", source = "hex", outer_checksum = "0C96FD47D8187634B6B0B693BC6464FD3EB0FDA8DD0A8A5516FAD7D2A5A24B36" },
 ]
 
 [requirements]
@@ -34,4 +33,3 @@ gleam_community_maths = { version = ">= 1.1.1 and < 2.0.0" }
 gleam_otp = { version = ">= 0.13.0 and < 1.0.0" }
 gleam_stdlib = { version = ">= 0.34.0 and < 2.0.0" }
 gleeunit = { version = ">= 1.0.0 and < 2.0.0" }
-toy = { version = ">= 0.5.1 and < 1.0.0" }
