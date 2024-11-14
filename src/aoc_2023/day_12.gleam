@@ -132,7 +132,6 @@ pub fn pt_2(input: Input) {
     )
   })
   |> list.fold(0, fn(acc, input) {
-    // io.debug(acc)
     find_possibilities(input.0, input.1, dict.new()).0 + acc
   })
 }
