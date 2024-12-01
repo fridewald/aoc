@@ -1,21 +1,21 @@
 import gleam/dict
 import gleam/int
-import gleam/io
 import gleam/list
 import gleam/option.{None, Some}
-import gleam/regex
+import gleam/regexp
 import gleam/string
 
 type Input =
   List(#(Int, Int))
 
 pub fn parse(input: String) -> Input {
-  let assert Ok(re) = regex.from_string(" *(\\d*) *(\\d*)")
+  let assert Ok(re) = regexp.from_string(" *(\\d*) *(\\d*)")
   input
   |> string.split("\n")
   |> list.map(fn(x) {
-    let res = regex.scan(re, x)
-    let assert Ok(regex.Match(_, [Some(first), Some(second)])) = list.first(res)
+    let res = regexp.scan(re, x)
+    let assert Ok(regexp.Match(_, [Some(first), Some(second)])) =
+      list.first(res)
     let assert Ok(first) = int.parse(first)
     let assert Ok(second) = int.parse(second)
     #(first, second)
@@ -46,7 +46,6 @@ pub fn pt_2(input: Input) {
       dict.upsert(acc_dict, x, increment)
     })
 
-  // io.debug(count_dict)
   input
   |> list.map(fn(x) { x.0 })
   |> list.map(fn(x) {
@@ -55,9 +54,5 @@ pub fn pt_2(input: Input) {
       Error(_) -> 0
     }
   })
-  // |> fn(x) {
-  //   io.debug(x)
-  //   x
-  // }
   |> int.sum
 }

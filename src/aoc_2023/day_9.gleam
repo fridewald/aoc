@@ -1,8 +1,8 @@
 import gleam/int
-import gleam/iterator
 import gleam/list
 import gleam/result
 import gleam/string
+import gleam/yielder as iterator
 
 pub fn parse(input: String) -> List(List(Int)) {
   input

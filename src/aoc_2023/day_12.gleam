@@ -1,9 +1,8 @@
 import gleam/bool
 import gleam/dict
 import gleam/int
-import gleam/io
 import gleam/list
-import gleam/regex
+import gleam/regexp
 import gleam/result
 import gleam/string
 
@@ -11,10 +10,10 @@ pub type Input =
   List(#(String, List(Int)))
 
 pub fn parse(input: String) -> Input {
-  let assert Ok(re) = regex.from_string("[ ,]")
+  let assert Ok(re) = regexp.from_string("[ ,]")
   input
   |> string.split("\n")
-  |> list.map(regex.split(re, _))
+  |> list.map(regexp.split(re, _))
   |> list.map(fn(line) {
     case line {
       [] -> panic as "bad input"
@@ -77,7 +76,7 @@ fn find_possibilities(
         "?" <> rest_row -> {
           case can_place_group_under_cursor(row, group) {
             True -> {
-              let rest_row_2 = row |> string.drop_left(group + 1)
+              let rest_row_2 = row |> string.drop_start(group + 1)
               let pos_rest_row =
                 find_possibilities(rest_row_2, rest_group, cache)
               let res2 = find_possibilities(rest_row, groups, pos_rest_row.1)
@@ -90,7 +89,7 @@ fn find_possibilities(
           case can_place_group_under_cursor(row, group) {
             True -> {
               find_possibilities(
-                row |> string.drop_left(group + 1),
+                row |> string.drop_start(group + 1),
                 rest_group,
                 cache,
               )
@@ -98,8 +97,7 @@ fn find_possibilities(
             False -> #(0, cache)
           }
         sym -> {
-          panic as "unknown symbole" <> sym
-          #(0, cache)
+          panic as { "unknown symbole" <> sym }
         }
       }
     }

@@ -1,11 +1,12 @@
 // import gladvent
+import gladvent
 import gleam/dict
 import gleam/int
 import gleam/io
 import gleam/list
 import gleam/order
 import gleam/string
-import gleam/string_builder
+import gleam/string_tree
 
 pub type Grid =
   dict.Dict(Posn, String)
@@ -15,8 +16,8 @@ pub type Posn {
 }
 
 pub fn main() {
-  // gladvent.main()
   io.println("Hello from aoc!")
+  gladvent.run()
 }
 
 pub fn parse_grid(input: String) -> Grid {
@@ -53,14 +54,14 @@ pub fn print_grid(grid: Grid) -> Nil {
         _ -> y_comp
       }
     })
-    |> list.fold(string_builder.new(), fn(acc, x) {
+    |> list.fold(string_tree.new(), fn(acc, x) {
       let acc = case { x.0 }.x == 0 && { x.0 }.y != 0 {
-        True -> acc |> string_builder.append("\n")
+        True -> acc |> string_tree.append("\n")
         False -> acc
       }
-      acc |> string_builder.append(x.1)
+      acc |> string_tree.append(x.1)
     })
-    |> string_builder.to_string
+    |> string_tree.to_string
   io.println(out)
 }
 

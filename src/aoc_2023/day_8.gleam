@@ -1,9 +1,9 @@
 import gleam/dict.{type Dict}
 import gleam/io
-import gleam/iterator.{cycle}
 import gleam/list
 import gleam/result
 import gleam/string
+import gleam/yielder as iterator
 import gleam_community/maths/arithmetics
 
 pub type Input {
@@ -83,10 +83,10 @@ fn do_step(
 fn get_next_instruction_function(base_instructions: String) {
   fn(instruct_string: String) {
     case string.first(instruct_string) {
-      Ok(cur_inst) -> #(cur_inst, string.drop_left(instruct_string, 1))
+      Ok(cur_inst) -> #(cur_inst, string.drop_start(instruct_string, 1))
       Error(_) -> {
         let cur_inst = string.first(base_instructions) |> result.unwrap("")
-        #(cur_inst, string.drop_left(base_instructions, 1))
+        #(cur_inst, string.drop_start(base_instructions, 1))
       }
     }
   }
@@ -97,7 +97,7 @@ pub fn pt_2_brute_force_is_too_slow(input: Input) {
     input.maps
     |> dict.keys
     |> list.filter(fn(node) {
-      case node |> string.drop_left(2) {
+      case node |> string.drop_start(2) {
         "A" -> True
         _ -> False
       }
@@ -107,7 +107,7 @@ pub fn pt_2_brute_force_is_too_slow(input: Input) {
   input.instruct
   |> string.to_graphemes
   |> iterator.from_list
-  |> cycle
+  |> iterator.cycle
   |> iterator.try_fold(#(1, end_with_a_nodes), fn(acc, next_instruct) {
     let #(n_step, nodes) = acc
     let next_nodes =
@@ -154,7 +154,7 @@ pub fn pt_2(input: Input) {
     input.maps
     |> dict.keys
     |> list.filter(fn(node) {
-      case node |> string.drop_left(2) {
+      case node |> string.drop_start(2) {
         "A" -> True
         _ -> False
       }
@@ -166,7 +166,7 @@ pub fn pt_2(input: Input) {
     input.instruct
     |> string.to_graphemes
     |> iterator.from_list
-    |> cycle
+    |> iterator.cycle
     |> iterator.try_fold(NoZ(0, node_1), fn(acc, next_instruct) {
       let next_node_fn = fn(node) {
         let assert Ok(map) = dict.get(maps, node)
