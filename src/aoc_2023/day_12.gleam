@@ -1,8 +1,8 @@
 import gleam/bool
 import gleam/dict
 import gleam/int
+import gleam/io
 import gleam/list
-import gleam/otp/task
 import gleam/regex
 import gleam/result
 import gleam/string
@@ -32,10 +32,7 @@ pub fn parse(input: String) -> Input {
 
 pub fn pt_1(input: Input) {
   input
-  |> list.map(fn(input) {
-    task.async(fn() { find_possibilities(input.0, input.1, dict.new()) })
-  })
-  |> list.map(task.await_forever)
+  |> list.map(fn(input) { find_possibilities(input.0, input.1, dict.new()) })
   |> list.map(fn(x) { x.0 })
   |> int.sum
 }

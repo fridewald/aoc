@@ -4,6 +4,7 @@ import gleam/int
 import gleam/io
 import gleam/list
 import gleam/order
+import gleam/string
 import gleam/string_builder
 
 pub type Grid =
@@ -16,6 +17,29 @@ pub type Posn {
 pub fn main() {
   // gladvent.main()
   io.println("Hello from aoc!")
+}
+
+pub fn parse_grid(input: String) -> Grid {
+  input
+  |> string.split("\n")
+  |> list.map(string.to_graphemes)
+  |> list.index_map(fn(row, i_y) {
+    list.index_map(row, fn(val, i_x) { #(Posn(i_x, i_y), val) })
+  })
+  |> list.flatten
+  |> dict.from_list
+}
+
+pub fn order_grid(grid: Grid) {
+  grid
+  |> dict.to_list
+  |> list.sort(by: fn(pos1, pos2) {
+    let y_comp = int.compare({ pos1.0 }.y, { pos2.0 }.y)
+    case y_comp {
+      order.Eq -> int.compare({ pos1.0 }.x, { pos2.0 }.x)
+      _ -> y_comp
+    }
+  })
 }
 
 pub fn print_grid(grid: Grid) {
