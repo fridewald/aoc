@@ -30,7 +30,7 @@ pub fn parse_grid(input: String) -> Grid {
   |> dict.from_list
 }
 
-pub fn order_grid(grid: Grid) {
+pub fn order_grid(grid: Grid) -> List(#(Posn, String)) {
   grid
   |> dict.to_list
   |> list.sort(by: fn(pos1, pos2) {
@@ -42,7 +42,7 @@ pub fn order_grid(grid: Grid) {
   })
 }
 
-pub fn print_grid(grid: Grid) {
+pub fn print_grid(grid: Grid) -> Nil {
   let out =
     grid
     |> dict.to_list
@@ -62,4 +62,26 @@ pub fn print_grid(grid: Grid) {
     })
     |> string_builder.to_string
   io.println(out)
+}
+
+pub fn rotate_counter_clock_wise(input: List(List(a))) -> List(List(a)) {
+  input
+  |> list.transpose
+  |> list.reverse
+}
+
+pub fn rotate_clock_wise(input: List(List(a))) -> List(List(a)) {
+  input
+  |> list.reverse
+  |> list.transpose
+}
+
+pub fn debug_pretty_print(input: List(List(String))) -> List(List(String)) {
+  io.println("=================")
+  input
+  |> list.map(string.join(_, ""))
+  |> string.join("\n")
+  |> io.println
+
+  input
 }
