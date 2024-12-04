@@ -1,9 +1,9 @@
-import aoc.{type Grid, Posn}
 import gleam/dict
 import gleam/int
 import gleam/list
 import gleam/result
 import gleam/string
+import grid.{type Grid, Posn}
 
 type Input =
   Grid

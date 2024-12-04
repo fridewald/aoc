@@ -1,4 +1,3 @@
-import aoc
 import gleam/dict
 import gleam/int
 import gleam/io
@@ -6,6 +5,7 @@ import gleam/list
 import gleam/otp/task
 import gleam/result
 import gleam/string
+import matrix
 
 type Input =
   List(List(String))
@@ -18,7 +18,7 @@ pub fn parse(input: String) -> Input {
 
 pub fn pt_1(input: Input) {
   input
-  |> aoc.rotate_counter_clock_wise
+  |> matrix.rotate_counter_clock_wise
   |> perform_tilt
   |> eval_score
 }
@@ -39,7 +39,7 @@ fn eval_score(input: Input) {
 }
 
 pub fn pt_2(input: Input) {
-  let start_north = aoc.rotate_counter_clock_wise(input)
+  let start_north = matrix.rotate_counter_clock_wise(input)
 
   perform_rounds(start_north, dict.new(), 1_000_000_000)
   |> eval_score
@@ -47,20 +47,20 @@ pub fn pt_2(input: Input) {
 
 fn single_round(input) {
   // io.println("=================")
-  // north |> aoc.rotate_clock_wise |> debug_pretty_print
+  // north |> matrix.rotate_clock_wise |> debug_pretty_print
 
   input
   |> perform_tilt
-  |> aoc.rotate_clock_wise
+  |> matrix.rotate_clock_wise
   // west
   |> perform_tilt
-  |> aoc.rotate_clock_wise
+  |> matrix.rotate_clock_wise
   // south
   |> perform_tilt
-  |> aoc.rotate_clock_wise
+  |> matrix.rotate_clock_wise
   // east
   |> perform_tilt
-  |> aoc.rotate_clock_wise
+  |> matrix.rotate_clock_wise
 }
 
 fn perform_rounds(input: Input, cache: dict.Dict(Input, Int), iterations: Int) {
