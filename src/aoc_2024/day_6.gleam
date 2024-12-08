@@ -14,8 +14,8 @@ pub opaque type Dir {
 }
 
 pub fn pt_1(input: String) {
-  grid.parse_grid_sized(input)
-  |> grid.debug_print_grid_sized
+  grid.parse_grid(input)
+  |> grid.print_grid
   |> loop_step
 }
 
@@ -37,10 +37,10 @@ fn next_dir(dir: Dir) {
   }
 }
 
-fn loop_step(in: GridSized) {
+fn loop_step(in: Grid(String)) {
   {
     use start_curser <- result.map(
-      in.grid
+      in
       |> dict.to_list
       |> list.find(fn(point) { point.1 == "^" }),
     )
@@ -51,7 +51,7 @@ fn loop_step(in: GridSized) {
 }
 
 fn do_loop_step(
-  in: GridSized,
+  in: Grid(String),
   curser: Posn,
   dir: Dir,
   pos_set: set.Set(Posn),
@@ -60,7 +60,7 @@ fn do_loop_step(
 
   {
     use next_value <- result.map(
-      in.grid |> dict.get(next_p) |> result.replace_error(pos_set),
+      in |> dict.get(next_p) |> result.replace_error(pos_set),
     )
     case next_value {
       "#" ->
@@ -77,7 +77,7 @@ pub fn pt_2(input: String) {
   |> loop_step_2
 }
 
-fn loop_step_2(in: Grid) {
+fn loop_step_2(in: Grid(String)) {
   let assert Ok(start_curser) =
     in
     |> dict.to_list
@@ -102,7 +102,7 @@ pub type Loop {
 }
 
 fn do_loop_step_2(
-  in: Grid,
+  in: Grid(String),
   curser: Posn,
   dir: Dir,
   pos_set: set.Set(#(Posn, Dir)),

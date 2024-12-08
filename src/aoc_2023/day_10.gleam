@@ -15,7 +15,7 @@ pub type Direction {
 }
 
 pub type Input =
-  #(Grid, Posn, Direction)
+  #(Grid(String), Posn, Direction)
 
 pub type IO {
   Out
@@ -43,7 +43,7 @@ pub fn parse(input: String) -> Input {
   #(my_simple_grid, start_pos, determine_start(my_simple_grid, start_pos))
 }
 
-fn determine_start(grid: Grid, start: Posn) {
+fn determine_start(grid: Grid(String), start: Posn) {
   case
     grid |> dict.get(Posn(..start, x: start.x - 1)),
     grid |> dict.get(Posn(..start, x: start.x + 1)),
@@ -68,7 +68,7 @@ pub fn pt_1(input: Input) {
 
 fn find_loop(
   pos: Posn,
-  grid: Grid,
+  grid: Grid(String),
   direction: Direction,
   curvature: Int,
   loop_dict: LoopGrid,

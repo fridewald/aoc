@@ -6,7 +6,7 @@ import gleam/string
 import grid.{type Grid, Posn}
 
 type Input =
-  Grid
+  Grid(String)
 
 pub fn parse(input: String) -> Input {
   let my_simple_grid =
@@ -21,7 +21,7 @@ pub fn parse(input: String) -> Input {
   my_simple_grid
 }
 
-fn expand(grid: Grid, factor: Int) {
+fn expand(grid: Grid(String), factor: Int) {
   let max_x =
     grid |> dict.to_list |> list.fold(0, fn(acc, x) { int.max(acc, { x.0 }.x) })
   let max_y =
@@ -82,7 +82,7 @@ pub fn pt_2(input: Input) {
   |> count_dists
 }
 
-fn count_dists(grid: Grid) {
+fn count_dists(grid: Grid(String)) {
   grid
   |> dict.filter(fn(_, val) { val != "." })
   |> dict.to_list
