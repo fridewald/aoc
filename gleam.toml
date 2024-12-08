@@ -19,6 +19,7 @@ gleam_community_maths = ">= 1.1.1 and < 2.0.0"
 gleam_regexp = ">= 1.0.0 and < 2.0.0"
 gleam_yielder = ">= 1.1.0 and < 2.0.0"
 parallel_map = ">= 2.1.0 and < 3.0.0"
+rememo = ">= 3.1.0 and < 4.0.0"
 
 [dev-dependencies]
 gladvent = ">= 2.0.2 and < 3.0.0"
@@ -92,3 +93,8 @@ pt_2 = 5479
 [gladvent.2024.6]
 pt_1 = 5551
 pt_2 = 1939
+
+
+[gladvent.2024.7]
+pt_1 = 1298103531759
+pt_2 = 140575048428831
