@@ -3,8 +3,9 @@ import gleam/dict
 import gleam/list
 import gleam/result
 import gleam/set
-import grid.{type Grid, type GridSized, type Posn, Grid}
+import grid.{type Grid, Grid}
 import parallel_map
+import vector.{type Vector, Vector}
 
 pub opaque type Dir {
   Up
@@ -15,16 +16,15 @@ pub opaque type Dir {
 
 pub fn pt_1(input: String) {
   grid.parse_grid(input)
-  |> grid.print_grid
   |> loop_step
 }
 
-fn next_pos(pos: grid.Posn, dir: Dir) {
+fn next_pos(pos: Vector, dir: Dir) {
   case dir {
-    Down -> grid.Posn(..pos, y: pos.y + 1)
-    Up -> grid.Posn(..pos, y: pos.y - 1)
-    Left -> grid.Posn(..pos, x: pos.x - 1)
-    Right -> grid.Posn(..pos, x: pos.x + 1)
+    Down -> Vector(..pos, y: pos.y + 1)
+    Up -> Vector(..pos, y: pos.y - 1)
+    Left -> Vector(..pos, x: pos.x - 1)
+    Right -> Vector(..pos, x: pos.x + 1)
   }
 }
 
@@ -52,10 +52,10 @@ fn loop_step(in: Grid(String)) {
 
 fn do_loop_step(
   in: Grid(String),
-  curser: Posn,
+  curser: Vector,
   dir: Dir,
-  pos_set: set.Set(Posn),
-) -> set.Set(Posn) {
+  pos_set: set.Set(Vector),
+) -> set.Set(Vector) {
   let next_p = next_pos(curser, dir)
 
   {
@@ -97,15 +97,15 @@ fn loop_step_2(in: Grid(String)) {
 }
 
 pub type Loop {
-  NoLoop(set.Set(#(Posn, Dir)))
+  NoLoop(set.Set(#(Vector, Dir)))
   Loop
 }
 
 fn do_loop_step_2(
   in: Grid(String),
-  curser: Posn,
+  curser: Vector,
   dir: Dir,
-  pos_set: set.Set(#(Posn, Dir)),
+  pos_set: set.Set(#(Vector, Dir)),
 ) -> Loop {
   let next_curser = next_pos(curser, dir)
   {
@@ -133,6 +133,6 @@ fn do_loop_step_2(
   |> result.unwrap_both()
 }
 
-fn is_loop(loop_set: set.Set(#(Posn, Dir)), next_pos: #(Posn, Dir)) {
+fn is_loop(loop_set: set.Set(#(Vector, Dir)), next_pos: #(Vector, Dir)) {
   set.contains(loop_set, next_pos)
 }

@@ -5,7 +5,8 @@ import gleam/list
 import gleam/order
 import gleam/result
 import gleam/string
-import grid.{type Grid, type Posn, Posn}
+import grid.{type Grid}
+import vector.{type Vector, Vector}
 
 pub type Direction {
   North
@@ -15,7 +16,7 @@ pub type Direction {
 }
 
 pub type Input =
-  #(Grid(String), Posn, Direction)
+  #(Grid(String), Vector, Direction)
 
 pub type IO {
   Out
@@ -23,7 +24,7 @@ pub type IO {
 }
 
 type LoopGrid =
-  dict.Dict(Posn, #(String, Direction))
+  dict.Dict(Vector, #(String, Direction))
 
 pub fn parse(input: String) -> Input {
   let my_simple_grid =
@@ -31,7 +32,7 @@ pub fn parse(input: String) -> Input {
     |> string.split("\n")
     |> list.map(string.to_graphemes)
     |> list.index_map(fn(row, i_y) {
-      list.index_map(row, fn(val, i_x) { #(Posn(i_x, i_y), val) })
+      list.index_map(row, fn(val, i_x) { #(Vector(i_x, i_y), val) })
     })
     |> list.flatten
     |> dict.from_list
@@ -43,11 +44,11 @@ pub fn parse(input: String) -> Input {
   #(my_simple_grid, start_pos, determine_start(my_simple_grid, start_pos))
 }
 
-fn determine_start(grid: Grid(String), start: Posn) {
+fn determine_start(grid: Grid(String), start: Vector) {
   case
-    grid |> dict.get(Posn(..start, x: start.x - 1)),
-    grid |> dict.get(Posn(..start, x: start.x + 1)),
-    grid |> dict.get(Posn(..start, y: start.y - 1))
+    grid |> dict.get(Vector(..start, x: start.x - 1)),
+    grid |> dict.get(Vector(..start, x: start.x + 1)),
+    grid |> dict.get(Vector(..start, y: start.y - 1))
   {
     Ok("F"), _, _ | Ok("L"), _, _ | Ok("-"), _, _ -> West
 
@@ -67,17 +68,17 @@ pub fn pt_1(input: Input) {
 }
 
 fn find_loop(
-  pos: Posn,
+  pos: Vector,
   grid: Grid(String),
   direction: Direction,
   curvature: Int,
   loop_dict: LoopGrid,
 ) {
   let next_pos = case direction {
-    East -> Posn(..pos, x: pos.x + 1)
-    North -> Posn(..pos, y: pos.y - 1)
-    South -> Posn(..pos, y: pos.y + 1)
-    West -> Posn(..pos, x: pos.x - 1)
+    East -> Vector(..pos, x: pos.x + 1)
+    North -> Vector(..pos, y: pos.y - 1)
+    South -> Vector(..pos, y: pos.y + 1)
+    West -> Vector(..pos, x: pos.x - 1)
   }
   use grid_val <- result.try(
     dict.get(grid, next_pos) |> result.replace_error("outside of grid"),
@@ -146,7 +147,7 @@ fn find_loop(
   }
 }
 
-fn pos_to_string(pos: Posn) {
+fn pos_to_string(pos: Vector) {
   "{x:" <> int.to_string(pos.x) <> ", y:" <> int.to_string(pos.y) <> "}"
 }
 
@@ -209,7 +210,7 @@ pub fn pt_2(input: Input) {
       use acc <- result.try(acc)
       // the beginning of a line is always outside
       let in_io = case grid_point.0 {
-        Posn(0, _) -> Out
+        Vector(0, _) -> Out
         _ -> acc.1
       }
       let grid_value = acc.0

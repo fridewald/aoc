@@ -3,7 +3,8 @@ import gleam/int
 import gleam/list
 import gleam/result
 import gleam/string
-import grid.{type Grid, Posn}
+import grid.{type Grid}
+import vector.{Vector}
 
 type Input =
   Grid(String)
@@ -14,7 +15,7 @@ pub fn parse(input: String) -> Input {
     |> string.split("\n")
     |> list.map(string.to_graphemes)
     |> list.index_map(fn(row, i_y) {
-      list.index_map(row, fn(val, i_x) { #(Posn(i_x, i_y), val) })
+      list.index_map(row, fn(val, i_x) { #(Vector(i_x, i_y), val) })
     })
     |> list.flatten
     |> dict.from_list
@@ -56,7 +57,7 @@ fn expand(grid: Grid(String), factor: Int) {
     expand_rows
     |> list.index_map(fn(y, i_y) {
       expand_cols
-      |> list.index_map(fn(x, i_x) { #(Posn(i_x, i_y), #(x, y)) })
+      |> list.index_map(fn(x, i_x) { #(Vector(i_x, i_y), #(x, y)) })
     })
     |> list.flatten
     |> dict.from_list
@@ -67,7 +68,7 @@ fn expand(grid: Grid(String), factor: Int) {
     let key = key_values.0
     let value = key_values.1
     let move = expand_dict |> dict.get(key) |> result.unwrap(#(0, 0))
-    #(Posn(key.x + move.0, key.y + move.1), value)
+    #(Vector(key.x + move.0, key.y + move.1), value)
   })
   |> dict.from_list
 }
