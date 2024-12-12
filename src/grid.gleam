@@ -100,6 +100,20 @@ pub fn size(grid: Grid(a)) -> #(Int, Int) {
   #(x_max, y_max)
 }
 
+pub const all_directions = [
+  Vector(-1, 0),
+  Vector(0, -1),
+  Vector(1, 0),
+  Vector(0, 1),
+]
+
+pub fn neighbours(grid: Grid(a), start: Vector) -> List(#(Vector, a)) {
+  use dir <- list.filter_map(all_directions)
+  let pos = vector.add(start, dir)
+  dict.get(grid, pos)
+  |> result.map(fn(v) { #(pos, v) })
+}
+
 pub fn inside(grid: Grid(a), posn: Vector) -> Bool {
   dict.has_key(grid, posn)
 }
