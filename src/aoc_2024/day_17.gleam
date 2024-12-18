@@ -23,7 +23,7 @@ import tuple
 // out 0 b = 0 c
 // bxl 0, b xor 6, c
 // bxc a, b1 xor c, c -> b1 = b xor 6
-// adv a* 8 +{0, 7}, b2, c -> b2 = b1 xor c 
+// adv a* 8 +{0, 7}, b2, c -> b2 = b1 xor c
 // cdv a1, b2, c -> c = a1 / 2^b2 -> a1 = a * 8 + {0, 7}
 // bxl a1, b2 xor 5, c1
 // bst a1, b3, c1 -> b2  = (a1 % 8) xor 5 -> b3 = b2 xor 5
@@ -32,7 +32,7 @@ import tuple
 //
 //
 // b2 =  (a1 % 8) xor 5
-// c = a1 / 2^b2 = a1 / (2^ ((a1 % 8)xor 5)) 
+// c = a1 / 2^b2 = a1 / (2^ ((a1 % 8)xor 5))
 // b = (((a1 % 8) xor 5) xor c) xor 6
 //
 //
@@ -42,7 +42,7 @@ import tuple
 //
 // 2,4,1,5,7,5,0,3,4,1,1,6,5,5,3,0
 //
-// 130714702117474
+// 109_020_013_201_563
 //
 
 pub type Stack {
@@ -89,10 +89,6 @@ pub fn run_program(program) {
   let out = yielder.to_list(do_run_program(program)) |> list.map(tuple.first_2)
   out |> list.reverse |> list.drop(1) |> list.reverse |> string.join(",")
 }
-
-// pub fn yield_first_output(program) {
-//   todo
-// }
 
 pub fn do_run_program(program) {
   let Program(stack:, remaining_instructions:, all_instructions:) = program
