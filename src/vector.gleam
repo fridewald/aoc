@@ -35,3 +35,7 @@ pub fn minus(posn1: Vector) -> Vector {
 pub fn multi(posn: Vector, n: Int) -> Vector {
   Vector(n * posn.x, n * posn.y)
 }
+
+pub fn modulo(posn: Vector, n: Int) -> Vector {
+  Vector(posn.x % n, posn.y % n)
+}

@@ -101,14 +101,8 @@ pub fn size(grid: Grid(a)) -> #(Int, Int) {
   #(x_max, y_max)
 }
 
-pub const all_directions = [
-  Vector(-1, 0),
-  Vector(0, -1),
-  Vector(1, 0),
-  Vector(0, 1),
-]
-
 pub fn neighbours(grid: Grid(a), start: Vector) -> List(#(Vector, a)) {
+  let all_directions = list.map(vector.all_directions, vector.dir_to_vector)
   use dir <- list.filter_map(all_directions)
   let pos = vector.add(start, dir)
   dict.get(grid, pos)
@@ -117,6 +111,15 @@ pub fn neighbours(grid: Grid(a), start: Vector) -> List(#(Vector, a)) {
 
 pub fn inside(grid: Grid(a), posn: Vector) -> Bool {
   dict.has_key(grid, posn)
+}
+
+pub fn new(size: Vector, empty: a) -> Grid(a) {
+  list.range(0, size.x - 1)
+  |> list.flat_map(fn(x) {
+    list.range(0, size.y - 1)
+    |> list.map(fn(y) { #(Vector(x, y), empty) })
+  })
+  |> dict.from_list
 }
 
 pub fn find(grid: Grid(a), value: a) -> Result(Vector, Nil) {

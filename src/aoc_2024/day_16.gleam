@@ -102,6 +102,7 @@ fn do_dijkstra(graph: Graph, distance, predes, q_set, q_pq) {
   case dict.get(graph, u) {
     Error(_) -> panic as "init error: node is missing a graph"
     Ok(Wall) -> panic as "we should never reach a wall as current node"
+    // found the end
     Ok(End) -> Ok(#(distance, predes))
     Ok(Node(neighbours:)) -> {
       // update distance

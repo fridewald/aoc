@@ -12,6 +12,9 @@ node_modules
 !./utils/curlInput.js
 cookie*.txt
 
+# jupyter
+.ipynb_checkpoints
+
 .idea
 
 
