@@ -4,10 +4,10 @@ import gleam/int
 import gleam/io
 import gleam/list
 import gleam/order
+import gleam/pair
 import gleam/result
 import gleam/string
 import gleam/string_tree
-import tuple
 import vector.{type Vector, Vector}
 
 pub type Grid(a) =
@@ -125,6 +125,6 @@ pub fn new(size: Vector, empty: a) -> Grid(a) {
 pub fn find(grid: Grid(a), value: a) -> Result(Vector, Nil) {
   dict.filter(grid, fn(_, v) { v == value })
   |> dict.to_list
-  |> list.map(tuple.first_2)
+  |> list.map(pair.first)
   |> list.first
 }

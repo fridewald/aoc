@@ -4,10 +4,10 @@ import gleam/int
 import gleam/io
 import gleam/list
 import gleam/option.{Some}
+import gleam/pair
 import gleam/regexp
 import gleam/string
 import grid
-import tuple
 import vector
 
 // const size_x = 11
@@ -73,7 +73,7 @@ pub fn pt_2(input: String) {
   let field = grid.new(size, ".")
   let robots =
     parse(input)
-    |> list.map(tuple.first_2)
+    |> list.map(pair.first)
 
   show_robots(field, robots)
 
@@ -81,7 +81,7 @@ pub fn pt_2(input: String) {
   |> list.map_fold(parse(input), fn(input, x) {
     io.println(string.repeat("#", size_x))
     io.println(int.to_string(x))
-    let speed = input |> list.map(tuple.second_2)
+    let speed = input |> list.map(pair.second)
     let step_on =
       input
       |> list.map(do_steps(_, size, 1))

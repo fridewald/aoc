@@ -2,8 +2,8 @@ import gleam/dict
 import gleam/int
 import gleam/list
 import gleam/option
+import gleam/pair
 import grid
-import tuple
 import vector.{type Vector, Down, Left, Right, Up}
 
 pub type Region {
@@ -60,7 +60,7 @@ fn find_areas(
         }
         rest -> {
           find_areas(
-            list.flatten([pos_res, list.map(rest, tuple.first_2)]),
+            list.flatten([pos_res, list.map(rest, pair.first)]),
             region,
             grid,
             update_grid,
@@ -140,7 +140,7 @@ fn find_areas_2(
         }
         rest -> {
           find_areas_2(
-            list.flatten([pos_res, list.map(rest, tuple.first_2)]),
+            list.flatten([pos_res, list.map(rest, pair.first)]),
             region,
             grid,
             update_grid,
@@ -186,7 +186,7 @@ fn count_fences(regions: List(Region2)) {
             True -> #(x, out)
           }
         })
-        |> tuple.second_2
+        |> pair.second
       }
       |> int.sum
     Region(key: region.key, area: region.area, fences: n_fences)

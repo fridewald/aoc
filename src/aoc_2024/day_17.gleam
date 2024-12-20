@@ -2,10 +2,10 @@ import aoc
 import gleam/bool
 import gleam/int
 import gleam/list
+import gleam/pair
 import gleam/result
 import gleam/string
 import gleam/yielder
-import tuple
 
 // thoughts
 //
@@ -86,7 +86,7 @@ fn parse(input: String) {
 }
 
 pub fn run_program(program) {
-  let out = yielder.to_list(do_run_program(program)) |> list.map(tuple.first_2)
+  let out = yielder.to_list(do_run_program(program)) |> list.map(pair.first)
   out |> list.reverse |> list.drop(1) |> list.reverse |> string.join(",")
 }
 

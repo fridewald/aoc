@@ -1,10 +1,10 @@
 import gleam/dict
 import gleam/int
 import gleam/list
+import gleam/pair
 import gleam/result
 import gleam/string
 import grid
-import tuple
 import vector
 
 fn parse(input: String) {
@@ -229,7 +229,7 @@ pub fn pt_1(input: String) {
     use #(map, robo_pos), move <- list.fold(movements, #(init_map, robo_pos))
     move_single_box(map, robo_pos, move)
   }
-  |> tuple.first_2
+  |> pair.first
   |> checksum
 }
 
@@ -243,6 +243,6 @@ pub fn pt_2(input: String) {
     let fold_res = move_double_box(map, robo_pos, move)
     fold_res
   }
-  |> tuple.first_2
+  |> pair.first
   |> checksum
 }

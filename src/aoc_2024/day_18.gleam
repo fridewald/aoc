@@ -4,10 +4,10 @@ import gleam/bool
 import gleam/dict
 import gleam/int
 import gleam/list
+import gleam/pair
 import gleam/result
 import gleam/string
 import grid
-import tuple
 import vector.{type Vector}
 
 // example
@@ -68,7 +68,7 @@ pub fn pt_1(input: String) {
   let graph: dijkstra.Graph(Vector) = make_graph(fall_grid, end)
 
   dijkstra.dijkstra(graph, start)
-  |> tuple.first_2
+  |> pair.first
   |> dict.get(end)
   |> result.unwrap(0)
 }
@@ -90,12 +90,12 @@ pub fn pt_2(input: String) {
     let graph: dijkstra.Graph(Vector) = make_graph(fall_grid, end)
 
     dijkstra.dijkstra(graph, start)
-    |> tuple.first_2
+    |> pair.first
     |> dict.get(end)
     |> result.is_ok
   }
   |> list.last
   |> aoc.unsafe_unwrap("help")
-  |> tuple.second_2
+  |> pair.second
   |> fn(ve) { int.to_string(ve.x) <> "," <> int.to_string(ve.y) }
 }

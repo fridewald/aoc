@@ -2,10 +2,10 @@ import gleam/bool
 import gleam/dict
 import gleam/int
 import gleam/list
+import gleam/pair
 import gleam/result
 import gleam/set
 import grid
-import tuple
 import vector
 
 fn parse(input: String) {
@@ -13,11 +13,11 @@ fn parse(input: String) {
   let assert [start] =
     dict.to_list(map)
     |> list.filter(fn(x) { x.1 == "S" })
-    |> list.map(tuple.first_2)
+    |> list.map(pair.first)
   let assert [end] =
     dict.to_list(map)
     |> list.filter(fn(x) { x.1 == "E" })
-    |> list.map(tuple.first_2)
+    |> list.map(pair.first)
 
   let graph =
     dict.map_values(map, fn(key, _) {

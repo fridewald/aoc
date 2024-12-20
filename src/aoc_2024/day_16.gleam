@@ -2,9 +2,9 @@ import dijkstra.{type Graph, End, Neighbour, Node, Wall}
 import gleam/bool
 import gleam/dict
 import gleam/list
+import gleam/pair
 import gleam/result
 import grid
-import tuple
 import vector.{type Vector, Down, Left, Right, Up}
 
 pub type Cursor =
@@ -105,7 +105,7 @@ pub fn pt_2(input: Input) {
       |> list.try_map(dict.get(predes, _))
       |> result.unwrap([])
       |> list.flatten
-      |> list.map(tuple.first_2)
+      |> list.map(pair.first)
       |> list.unique
       |> list.length
     }
