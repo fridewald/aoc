@@ -1,9 +1,6 @@
-import aoc
 import dijkstra.{type Graph, End, Neighbour, Node}
 import gleam/dict
-import gleam/function
 import gleam/int
-import gleam/io
 import gleam/list
 import gleam/pair
 import gleam/result
