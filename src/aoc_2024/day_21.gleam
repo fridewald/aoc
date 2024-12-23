@@ -1,10 +1,13 @@
 import aoc
+import gleam/bool
 import gleam/dict
 import gleam/int
-import gleam/io
 import gleam/list
+import gleam/pair
+import gleam/result
 import gleam/string
 import grid
+import rememo/memo
 import vector
 
 // number pad
@@ -25,6 +28,8 @@ pub type Keypad {
   Right
   Action
 }
+
+// pub type Keypad
 
 fn parse(input: String) {
   let number_size = vector.Vector(3, 4)
@@ -184,6 +189,7 @@ pub fn pt_1(input: String) {
 }
 
 pub fn pt_2(input: String) {
+  use cache <- memo.create()
   let #(number_list, number_combi, pad_combi) = parse(input)
   {
     use row <- list.map(number_list)
@@ -201,22 +207,23 @@ pub fn pt_2(input: String) {
       })
 
     let twenty_5_steps =
-      // not working, way to slow and memory intensive
-      list.range(1, 25)
-      |> list.fold(first_steps, fn(steps, i) {
-        io.debug(i)
-        robot_step(steps, pad_combi) |> io.debug
+      list.map(first_steps, fn(steps) {
+        let steps = [Action, ..steps]
+        list.window_by_2(steps)
+        |> list.map(robot_step_cascade(_, pad_combi, 25, cache))
+        |> int.sum
       })
+      |> list_min
 
-    let assert Ok(min_seq) =
-      list.map(twenty_5_steps, list.length)
-      |> list.reduce(int.min)
-    min_seq * row_value
+    twenty_5_steps * row_value
   }
   |> int.sum
 }
 
-fn robot_step(steps, pad_combi) {
+fn robot_step(
+  steps: List(List(Keypad)),
+  pad_combi: dict.Dict(#(Keypad, Keypad), List(List(a))),
+) -> List(List(a)) {
   use first_step <- list.flat_map(steps)
   let first_step = [Action, ..first_step]
   let out =
@@ -235,4 +242,63 @@ fn robot_step(steps, pad_combi) {
 
   out
   |> list.filter(fn(x) { list.length(x) == min_length })
+}
+
+// directional keypad
+//     +---+---+
+//     | ^ | A |
+// +---+---+---+
+// | < | v | > |
+// +---+---+---+
+//
+// A 0         2 9 A
+// A <    A    ^  A
+// A v<<A >>^A <A >A
+// A v<A
+
+fn robot_step_cascade(
+  step: #(Keypad, Keypad),
+  pad_combi: dict.Dict(#(Keypad, Keypad), List(List(Keypad))),
+  depth,
+  cache,
+) -> Int {
+  use <- memo.memoize(cache, #(step, depth))
+  use <- bool.guard(depth == 0, 1)
+  {
+    use list_of_next_steps <- result.map(dict.get(pad_combi, step))
+    let out_list =
+      list.map(list_of_next_steps, fn(next_steps) {
+        let next_steps = [Action, ..next_steps]
+        list.window_by_2(next_steps)
+        |> list.map(robot_step_cascade(_, pad_combi, depth - 1, cache))
+        |> int.sum
+      })
+
+    out_list
+    |> list_min
+  }
+  |> aoc.unsafe_unwrap("help")
+}
+
+fn list_shortest(in_list: List(List(a))) -> List(a) {
+  list.index_fold(in_list, #([], 0), fn(acc, x, i) {
+    let x_len = list.length(x)
+    let #(_, acc_len) = acc
+    case i, x_len {
+      0, _ -> #(x, x_len)
+      _, x_len if x_len < acc_len -> #(x, x_len)
+      _, _ -> acc
+    }
+  })
+  |> pair.first
+}
+
+fn list_min(in_list: List(Int)) {
+  in_list
+  |> list.index_fold(0, fn(acc, x, i) {
+    case i {
+      0 -> x
+      _ -> int.min(acc, x)
+    }
+  })
 }
