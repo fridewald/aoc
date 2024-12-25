@@ -280,19 +280,6 @@ fn robot_step_cascade(
   |> aoc.unsafe_unwrap("help")
 }
 
-fn list_shortest(in_list: List(List(a))) -> List(a) {
-  list.index_fold(in_list, #([], 0), fn(acc, x, i) {
-    let x_len = list.length(x)
-    let #(_, acc_len) = acc
-    case i, x_len {
-      0, _ -> #(x, x_len)
-      _, x_len if x_len < acc_len -> #(x, x_len)
-      _, _ -> acc
-    }
-  })
-  |> pair.first
-}
-
 fn list_min(in_list: List(Int)) {
   in_list
   |> list.index_fold(0, fn(acc, x, i) {
