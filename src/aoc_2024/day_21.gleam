@@ -3,7 +3,6 @@ import gleam/bool
 import gleam/dict
 import gleam/int
 import gleam/list
-import gleam/pair
 import gleam/result
 import gleam/string
 import grid

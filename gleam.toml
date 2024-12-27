@@ -27,6 +27,7 @@ argamak = ">= 1.1.0 and < 2.0.0"
 gleamy_structures = ">= 1.1.0 and < 2.0.0"
 pocket_watch = ">= 1.0.0 and < 2.0.0"
 gtransducer = ">= 1.0.1 and < 2.0.0"
+simplifile = ">= 2.2.0 and < 3.0.0"
 
 [dev-dependencies]
 gladvent = ">= 2.0.2 and < 3.0.0"
@@ -179,6 +180,7 @@ pt_2 = "df,kg,la,mp,pb,qh,sk,th,vn,ww,xp,yp,zk"
 
 [gladvent.2024.24]
 pt_1 = 48806532300520
+pt_2 = "ddn,kqh,nhs,nnf,wrc,z09,z20,z34--1011000101111110100111111101010100000011101000"
 
 [gladvent.2024.25]
 pt_1 = 3317

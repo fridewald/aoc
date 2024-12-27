@@ -64,3 +64,4 @@ nx = { version = ">= 0.9.2 and < 1.0.0" }
 parallel_map = { version = ">= 2.1.0 and < 3.0.0" }
 pocket_watch = { version = ">= 1.0.0 and < 2.0.0" }
 rememo = { version = ">= 3.1.0 and < 4.0.0" }
+simplifile = { version = ">= 2.2.0 and < 3.0.0" }
